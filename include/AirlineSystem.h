@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "Set.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,6 +13,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <algorithm>
+#include <limits>
 
 using namespace std;
 
@@ -80,6 +82,7 @@ public:
     void cheapest_trip_through_middle(string source, string middle, string destination);
     bool direct_flight(string source, string destination);
     bool is_reachable(string source, string destination);
+    void prim_mst_subgraph(vector<string>& nodes, double& totalWeight, vector<pair<string, string>>& treeEdges);
 };
 
 #endif // AIRLINESYSTEM_H

@@ -734,3 +734,60 @@ bool airline_system::is_reachable(string source, string destination)
 {
     return fewest_hops(source, destination) != -1;
 }
+
+void airline_system::prim_mst_subgraph(vector<string>& nodes, double& totalWeight, vector<pair<string, string>>& treeEdges) {
+    int n = nodes.size();
+
+    unordered_map<string, int> idx;
+
+    for(int i = 0; i < n; i++) idx[nodes[i]] = i;
+
+    //building subgraph
+    vector<vector<pair<int, double>>> adj(n);
+    for(int i = 0; i < n; i++) {
+        auto it = flights.find(nodes[i]);
+        if(it == flights.end()) continue; //not concerning current subgraph
+        for (auto &f : it->second) {
+            auto jt = idx.find(f.destination);
+            if(jt != idx.end()) {
+                adj[i].push_back({jt->second, f.cost});
+            }
+        }
+    }
+
+    set inMST;
+    inMST += 0; //start at first node
+    totalWeight = 0;
+
+    while(inMST.size() < n) {
+        double bestW = numeric_limits<double>::infinity();
+        int bu=-1, bv=-1;
+        //look for cheapest edge crossing the "cut" (one edge in and one edge not in current tree)
+        for(int u = 0; u < n; u++) {
+            if (!(u^inMST)) continue; //u not in MST
+            for(auto &pr : adj[u]) {
+                int v = pr.first;
+                double w = pr.second;
+                if(!(v^inMST) && w < bestW) {
+                    bestW = w;
+                    bu = u;
+                    bv = v;
+                }
+            }
+        }
+        if(bu < 0) {  //disconnected
+            cout << "Subset not fully connected" << endl;
+            break;
+        } 
+        totalWeight += bestW;
+        inMST += bu;
+        inMST += bv;
+        treeEdges.emplace_back(nodes[bu], nodes[bv]);
+    }
+
+    // //decode into string-pairs
+    // for(int code : chosenEdges.data) {
+    //     int u = code / n, v = code % n;
+    //     treeEdges.emplace_back(nodes[u], nodes[v]);
+    // }
+}

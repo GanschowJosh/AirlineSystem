@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
         cout << "15. Cheapest trip through a middle airport" << endl;
         cout << "16. List destinations reachable with at most F flights" << endl;
         cout << "17. List destinations for under M total fare" << endl;
-        cout << "18. Exit" << endl;
+        cout << "18. Prim's with subgraph" << endl;
+        cout << "19. Exit" << endl;
         cout << "Enter your choice: ";
         int choice;
         cin >> choice;
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
         system("clear"); // Clear screen on Linux and macOS
 #endif
 
-        if (choice == 18)
+        if (choice == 19)
         {
             break;
         }
@@ -235,6 +236,25 @@ int main(int argc, char *argv[])
             vector<string> path = {source};
             vector<string> seen_destinations;
             as.destinations_under_cost(source, max_cost, path, seen_destinations);
+        }
+        else if(choice == 18) {
+            vector<string> subset = {
+                "JFK",
+                "LAX",
+                "ORD",
+                "ATL",
+                "SFO",
+                "MIA"
+            };
+            double totalCost;
+            vector<pair<string, string>> treeEdges;
+            as.prim_mst_subgraph(subset, totalCost, treeEdges);
+
+            cout << "Prim's MST on subset:\n";
+            for (auto &e : treeEdges) {
+                cout << " " << e.first << "->" << e.second << "\n";
+            }
+            cout << "Total Cost: " << totalCost << endl;
         }
 
         cout << "\n==================================================\n" << endl;
